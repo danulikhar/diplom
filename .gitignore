@@ -4,3 +4,9 @@
 Thumbs.db
 .env
 *.log
+node_modules/
+dist/
+frontend/dist/
+backend/.venv/
+__pycache__/
+*.pyc
