@@ -1,5 +1,6 @@
-export type StoryTemplate = {
+﻿export type StoryTemplate = {
   id: number;
   title: string;
-  prompt: string;
+  description: string;
+  prompt_text: string;
 };
