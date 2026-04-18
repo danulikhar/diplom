@@ -1,7 +1,7 @@
 ﻿from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import health, templates
+from app.routers import health, story, templates
 
 app = FastAPI(
     title="Fairy Tale Generator API",
@@ -22,3 +22,4 @@ app.add_middleware(
 
 app.include_router(health.router, prefix="/api", tags=["health"])
 app.include_router(templates.router, prefix="/api", tags=["templates"])
+app.include_router(story.router, prefix="/api", tags=["story"])

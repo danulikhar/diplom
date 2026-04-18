@@ -54,10 +54,15 @@
 
 - Главная страница с названием проекта и кратким описанием
 - Три пользовательских сценария в виде карточек
-- Базовый сервисный слой на frontend для будущей работы с API
-- FastAPI backend с тестовыми endpoint:
+- Формализация запроса через шаблон, свободный ввод и опрос
+- Генерация детской сказки через backend
+- FastAPI backend с endpoint:
   - `GET /api/health`
   - `GET /api/templates`
+  - `POST /api/formalization/template`
+  - `POST /api/formalization/custom`
+  - `POST /api/formalization/survey`
+  - `POST /api/stories/generate`
 
 ## Как запустить frontend
 
@@ -71,11 +76,20 @@ Frontend будет доступен по адресу `http://localhost:5173`.
 
 ## Как запустить backend
 
-```bash
+```powershell
 cd backend
-python -m venv .venv
-.venv\Scripts\activate
-pip install -r requirements.txt
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+python main.py
+```
+
+Если виртуального окружения `.venv` еще нет, создайте его перед активацией:
+
+```powershell
+cd backend
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
 python main.py
 ```
 
@@ -101,7 +115,7 @@ http://localhost:8000/docs
 
 ## Дальше можно развивать
 
-- формы для трех сценариев генерации сказок
 - интеграцию с PostgreSQL
-- подключение генеративной модели
 - хранение истории пользовательских сказок
+- аутентификацию пользователей
+- сохранение и просмотр ранее сгенерированных сказок

@@ -22,3 +22,11 @@ def get_story_templates() -> list[StoryTemplateResponse]:
             prompt_text="Напиши детскую сказку о дружбе, взаимопомощи и преодолении трудностей вместе, чтобы история завершалась теплым и счастливым финалом.",
         ),
     ]
+
+
+def get_story_template_by_id(template_id: int) -> StoryTemplateResponse | None:
+    for template in get_story_templates():
+        if template.id == template_id:
+            return template
+
+    return None
