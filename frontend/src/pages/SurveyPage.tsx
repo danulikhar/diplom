@@ -1,4 +1,4 @@
-﻿import type { FormEvent } from 'react';
+import type { FormEvent } from 'react';
 import { useState } from 'react';
 import { StoryWorkflowResult } from '../components/StoryWorkflowResult';
 import { PageLayout } from '../components/PageLayout';
@@ -57,13 +57,11 @@ export function SurveyPage() {
         length: formData.storyLength,
       });
       setFormalizedStory(result);
-      setSuccessMessage('Результаты опроса формализованы. Теперь можно запустить генерацию сказки.');
+      setSuccessMessage('Мы бережно собрали ваши ответы в основу будущей сказки. Можно звать историю.');
     } catch (requestError) {
       setFormalizedStory(null);
       setError(
-        requestError instanceof Error
-          ? requestError.message
-          : 'Не удалось формализовать результаты опроса.',
+        requestError instanceof Error ? requestError.message : 'Не удалось собрать сказку из ответов.',
       );
     } finally {
       setIsFormalizing(false);
@@ -79,7 +77,7 @@ export function SurveyPage() {
 
   const handleGenerate = async () => {
     if (!formalizedStory) {
-      setError('Сначала выполните формализацию результатов опроса.');
+      setError('Сначала заполните и сохраните ответы, чтобы сказка получила опору.');
       return;
     }
 
@@ -90,10 +88,10 @@ export function SurveyPage() {
       const result = await generateStory(formalizedStory);
       setStoryText(result.story_text);
       setModelName(result.model);
-      setSuccessMessage('Сказка успешно сгенерирована через backend.');
+      setSuccessMessage('Сказка готова. Ниже уже ждет теплая история.');
     } catch (requestError) {
       setError(
-        requestError instanceof Error ? requestError.message : 'Не удалось сгенерировать сказку.',
+        requestError instanceof Error ? requestError.message : 'Не удалось позвать сказку. Попробуйте еще раз.',
       );
     } finally {
       setIsGenerating(false);
@@ -118,7 +116,7 @@ export function SurveyPage() {
           type="button"
           onClick={handleGenerate}
         >
-          {isGenerating ? 'Генерация...' : 'Сгенерировать сказку'}
+          {isGenerating ? 'Плетем историю...' : 'Оживить сказку'}
         </button>
       </div>
     </div>
@@ -127,11 +125,11 @@ export function SurveyPage() {
   return (
     <PageLayout>
       <section className="page-header">
-        <p className="page-header__eyebrow">Сценарий 3</p>
-        <h1>Опрос для подготовки запроса</h1>
+        <p className="page-header__eyebrow">Путь третий</p>
+        <h1>Соберите сказку по маленьким подсказкам</h1>
         <p>
-          Форма собирает ключевые параметры будущей сказки. После отправки данные переходят в единый
-          формализованный prompt и могут быть использованы для генерации через backend.
+          Ответьте на несколько вопросов о герое, настроении и мире сказки. Из этих деталей
+          постепенно сложится история, которая подойдет именно вам.
         </p>
       </section>
 
@@ -228,7 +226,7 @@ export function SurveyPage() {
           {successMessage ? <div className="info-block info-block--success">{successMessage}</div> : null}
 
           <button className="primary-button" disabled={isFormalizing} type="submit">
-            {isFormalizing ? 'Формализация...' : 'Сформировать запрос'}
+            {isFormalizing ? 'Собираем основу...' : 'Собрать основу сказки'}
           </button>
         </form>
       </section>
@@ -238,7 +236,7 @@ export function SurveyPage() {
           formalizedStory={formalizedStory}
           modelName={modelName}
           sourceContent={sourceContent}
-          sourcePlaceholder="После отправки формы здесь появятся структурированные ответы пользователя."
+          sourcePlaceholder="Когда вы заполните форму, здесь появятся выбранные детали будущей сказки."
           storyText={storyText}
         />
       </section>

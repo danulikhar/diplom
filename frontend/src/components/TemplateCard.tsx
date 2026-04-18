@@ -1,4 +1,4 @@
-﻿import type { StoryTemplate } from '../types/template';
+import type { StoryTemplate } from '../types/template';
 
 type TemplateCardProps = {
   template: StoryTemplate;
@@ -15,7 +15,7 @@ export function TemplateCard({ template, isSelected, onSelect }: TemplateCardPro
       </div>
 
       <button className="template-card__button" type="button" onClick={() => onSelect(template)}>
-        {isSelected ? 'Шаблон выбран' : 'Выбрать шаблон'}
+        {isSelected ? 'Выбрано' : 'Выбрать'}
       </button>
     </article>
   );

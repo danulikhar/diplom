@@ -1,4 +1,4 @@
-﻿import type { FormEvent } from 'react';
+import type { FormEvent } from 'react';
 import { useState } from 'react';
 import { StoryWorkflowResult } from '../components/StoryWorkflowResult';
 import { PageLayout } from '../components/PageLayout';
@@ -22,7 +22,7 @@ export function CustomPromptPage() {
     const normalizedText = promptText.trim();
 
     if (!normalizedText) {
-      setError('Введите текст запроса, чтобы продолжить.');
+      setError('Напишите пару строк о будущей сказке, чтобы мы могли начать.');
       setSubmittedText('');
       setFormalizedStory(null);
       return;
@@ -37,13 +37,11 @@ export function CustomPromptPage() {
       setModelName('');
       const result = await formalizeCustomPrompt(normalizedText);
       setFormalizedStory(result);
-      setSuccessMessage(
-        'Пользовательский запрос формализован. Теперь можно запустить генерацию сказки.',
-      );
+      setSuccessMessage('Ваша задумка уже превратилась в основу сказки. Можно звать историю.');
     } catch (requestError) {
       setFormalizedStory(null);
       setError(
-        requestError instanceof Error ? requestError.message : 'Не удалось формализовать запрос.',
+        requestError instanceof Error ? requestError.message : 'Не удалось подготовить вашу задумку.',
       );
     } finally {
       setIsFormalizing(false);
@@ -52,7 +50,7 @@ export function CustomPromptPage() {
 
   const handleGenerate = async () => {
     if (!formalizedStory) {
-      setError('Сначала выполните формализацию запроса.');
+      setError('Сначала сохраните задумку, чтобы история получила направление.');
       return;
     }
 
@@ -63,10 +61,10 @@ export function CustomPromptPage() {
       const result = await generateStory(formalizedStory);
       setStoryText(result.story_text);
       setModelName(result.model);
-      setSuccessMessage('Сказка успешно сгенерирована через backend.');
+      setSuccessMessage('Сказка готова. Ниже уже можно читать.');
     } catch (requestError) {
       setError(
-        requestError instanceof Error ? requestError.message : 'Не удалось сгенерировать сказку.',
+        requestError instanceof Error ? requestError.message : 'Не удалось создать сказку. Попробуйте еще раз.',
       );
     } finally {
       setIsGenerating(false);
@@ -86,7 +84,7 @@ export function CustomPromptPage() {
           type="button"
           onClick={handleGenerate}
         >
-          {isGenerating ? 'Генерация...' : 'Сгенерировать сказку'}
+          {isGenerating ? 'Плетем историю...' : 'Оживить сказку'}
         </button>
       </div>
     </div>
@@ -95,18 +93,18 @@ export function CustomPromptPage() {
   return (
     <PageLayout>
       <section className="page-header">
-        <p className="page-header__eyebrow">Сценарий 2</p>
-        <h1>Свой запрос</h1>
+        <p className="page-header__eyebrow">Путь второй</p>
+        <h1>Расскажите сказку своими словами</h1>
         <p>
-          Введите свободный текст запроса. Система выполнит мягкую формализацию, а затем по кнопке
-          отправит итоговый prompt на backend для генерации сказки.
+          Просто опишите настроение, героя или целое приключение. Даже короткая мысль может стать
+          началом теплой истории.
         </p>
       </section>
 
       <section className="form-section">
         <form className="form-card" onSubmit={handleSubmit}>
           <label className="form-field" htmlFor="custom-prompt">
-            <span>Текст запроса</span>
+            <span>О чем будет ваша сказка</span>
             <textarea
               id="custom-prompt"
               name="customPrompt"
@@ -121,7 +119,7 @@ export function CustomPromptPage() {
           {successMessage ? <div className="info-block info-block--success">{successMessage}</div> : null}
 
           <button className="primary-button" disabled={isFormalizing} type="submit">
-            {isFormalizing ? 'Формализация...' : 'Сформировать запрос'}
+            {isFormalizing ? 'Слушаем и собираем...' : 'Сохранить задумку'}
           </button>
         </form>
       </section>
@@ -131,7 +129,7 @@ export function CustomPromptPage() {
           formalizedStory={formalizedStory}
           modelName={modelName}
           sourceContent={sourceContent}
-          sourcePlaceholder="После формализации здесь появится введенный вами текст."
+          sourcePlaceholder="Когда вы поделитесь своей идеей, здесь появится ее текст."
           storyText={storyText}
         />
       </section>

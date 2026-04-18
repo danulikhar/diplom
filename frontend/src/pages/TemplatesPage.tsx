@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StoryWorkflowResult } from '../components/StoryWorkflowResult';
 import { PageLayout } from '../components/PageLayout';
 import { TemplateCard } from '../components/TemplateCard';
@@ -28,7 +28,7 @@ export function TemplatesPage() {
         const data = await getTemplates();
         setTemplates(data);
       } catch {
-        setTemplatesError('Не удалось загрузить шаблоны. Проверьте запуск backend и попробуйте снова.');
+        setTemplatesError('Не удалось открыть подборку сказок. Попробуйте обновить страницу чуть позже.');
       } finally {
         setIsLoading(false);
       }
@@ -48,7 +48,7 @@ export function TemplatesPage() {
 
   const handleFormalize = async () => {
     if (!selectedTemplate) {
-      setRequestError('Сначала выберите шаблон.');
+      setRequestError('Сначала выберите основу, с которой начнется сказка.');
       return;
     }
 
@@ -60,14 +60,10 @@ export function TemplatesPage() {
       setModelName('');
       const result = await formalizeTemplate(selectedTemplate.id, childAge);
       setFormalizedStory(result);
-      setSuccessMessage(
-        'Формализация по шаблону успешно выполнена. Теперь можно запустить генерацию сказки.',
-      );
+      setSuccessMessage('Основа сказки готова. Осталось только попросить историю ожить.');
     } catch (requestErrorValue) {
       setRequestError(
-        requestErrorValue instanceof Error
-          ? requestErrorValue.message
-          : 'Не удалось формализовать запрос.',
+        requestErrorValue instanceof Error ? requestErrorValue.message : 'Не удалось подготовить основу сказки.',
       );
     } finally {
       setIsFormalizing(false);
@@ -76,7 +72,7 @@ export function TemplatesPage() {
 
   const handleGenerate = async () => {
     if (!formalizedStory) {
-      setRequestError('Сначала выполните формализацию запроса.');
+      setRequestError('Сначала подготовьте основу, а потом запускайте историю.');
       return;
     }
 
@@ -87,12 +83,10 @@ export function TemplatesPage() {
       const result = await generateStory(formalizedStory);
       setStoryText(result.story_text);
       setModelName(result.model);
-      setSuccessMessage('Сказка успешно сгенерирована через backend.');
+      setSuccessMessage('Сказка уже готова и ждет вас ниже.');
     } catch (requestErrorValue) {
       setRequestError(
-        requestErrorValue instanceof Error
-          ? requestErrorValue.message
-          : 'Не удалось сгенерировать сказку.',
+        requestErrorValue instanceof Error ? requestErrorValue.message : 'Не удалось создать сказку. Попробуйте еще раз.',
       );
     } finally {
       setIsGenerating(false);
@@ -108,7 +102,7 @@ export function TemplatesPage() {
       </div>
 
       <label className="form-field" htmlFor="template-child-age">
-        <span>Возраст ребенка для адаптации сказки</span>
+        <span>Для какого возраста подстроить сказку</span>
         <input
           id="template-child-age"
           name="templateChildAge"
@@ -121,7 +115,7 @@ export function TemplatesPage() {
 
       <div className="action-row">
         <button className="primary-button" disabled={isFormalizing} type="button" onClick={handleFormalize}>
-          {isFormalizing ? 'Формализация...' : 'Сформировать запрос'}
+          {isFormalizing ? 'Готовим основу...' : 'Подготовить сказку'}
         </button>
 
         <button
@@ -130,7 +124,7 @@ export function TemplatesPage() {
           type="button"
           onClick={handleGenerate}
         >
-          {isGenerating ? 'Генерация...' : 'Сгенерировать сказку'}
+          {isGenerating ? 'Плетем историю...' : 'Оживить сказку'}
         </button>
       </div>
     </div>
@@ -139,16 +133,15 @@ export function TemplatesPage() {
   return (
     <PageLayout>
       <section className="page-header">
-        <p className="page-header__eyebrow">Сценарий 1</p>
-        <h1>Готовые запросы</h1>
+        <p className="page-header__eyebrow">Путь первый</p>
+        <h1>Выберите сказочную заготовку</h1>
         <p>
-          Здесь собраны шаблоны, которые можно использовать как основу для генерации детской
-          сказки. Теперь выбранный шаблон можно формализовать и отправить на генерацию через
-          backend.
+          Здесь собраны готовые идеи для будущих историй. Выберите ту, что отзывается теплее
+          всего, и превратите ее в настоящую сказку.
         </p>
       </section>
 
-      {isLoading ? <div className="info-block">Загрузка шаблонов...</div> : null}
+      {isLoading ? <div className="info-block">Открываем полку со сказками...</div> : null}
       {templatesError ? <div className="info-block info-block--error">{templatesError}</div> : null}
       {requestError ? <div className="info-block info-block--error">{requestError}</div> : null}
       {successMessage ? <div className="info-block info-block--success">{successMessage}</div> : null}
@@ -171,7 +164,7 @@ export function TemplatesPage() {
           formalizedStory={formalizedStory}
           modelName={modelName}
           sourceContent={sourceContent}
-          sourcePlaceholder="Выберите один из шаблонов, чтобы перейти к формализации и генерации."
+          sourcePlaceholder="Выберите одну из заготовок, и здесь появится ее описание."
           storyText={storyText}
         />
       </section>

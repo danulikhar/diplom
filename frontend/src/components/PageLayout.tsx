@@ -1,11 +1,11 @@
-﻿import type { PropsWithChildren } from 'react';
+import type { PropsWithChildren } from 'react';
 import { NavLink } from 'react-router-dom';
 
 const navigationItems = [
   { to: '/', label: 'Главная', end: true },
-  { to: '/templates', label: 'Готовые запросы' },
-  { to: '/custom-prompt', label: 'Свой запрос' },
-  { to: '/survey', label: 'Опрос' },
+  { to: '/templates', label: 'Заготовки' },
+  { to: '/custom-prompt', label: 'Своя идея' },
+  { to: '/survey', label: 'По шагам' },
 ];
 
 export function PageLayout({ children }: PropsWithChildren) {
@@ -14,7 +14,7 @@ export function PageLayout({ children }: PropsWithChildren) {
       <header className="topbar">
         <div className="topbar__inner">
           <NavLink className="brand" to="/">
-            Генератор детских сказок
+            Сказочная мастерская
           </NavLink>
 
           <nav className="navigation" aria-label="Основная навигация">

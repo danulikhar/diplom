@@ -1,5 +1,5 @@
 :root {
-  font-family: "Trebuchet MS", "Segoe UI", Tahoma, sans-serif;
+  font-family: Georgia, "Times New Roman", serif;
   line-height: 1.5;
   font-weight: 400;
   color: #213547;
@@ -137,8 +137,9 @@ pre {
 .brand {
   position: relative;
   padding-left: 18px;
+  font-family: Georgia, "Palatino Linotype", "Book Antiqua", serif;
   font-weight: 800;
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   letter-spacing: 0.01em;
   color: #7c2d68;
 }
@@ -276,10 +277,9 @@ pre {
   margin: 0 0 14px;
   padding: 8px 14px;
   border-radius: 999px;
-  font-size: 0.88rem;
+  font-size: 0.82rem;
   font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  letter-spacing: 0.05em;
   color: #9d174d;
   background: rgba(255, 255, 255, 0.68);
 }
@@ -316,7 +316,8 @@ pre {
 .scenario-card h3,
 .template-card h3,
 .prompt-preview h3 {
-  font-family: "Trebuchet MS", "Arial Rounded MT Bold", sans-serif;
+  font-family: Georgia, "Palatino Linotype", "Book Antiqua", serif;
+  letter-spacing: 0.01em;
 }
 
 .hero__description,
@@ -332,6 +333,21 @@ pre {
 .info-block {
   margin: 0;
   color: var(--color-muted);
+}
+
+.hero__description,
+.section-heading p,
+.scenario-card p,
+.page-header p,
+.template-card p,
+.result-panel__header p,
+.prompt-preview__description,
+.result-card p,
+.placeholder-card,
+.info-block,
+.prompt-preview pre,
+.survey-result__item strong {
+  line-height: 1.75;
 }
 
 .hero__description,
