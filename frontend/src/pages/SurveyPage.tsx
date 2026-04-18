@@ -1,6 +1,9 @@
 ﻿import type { FormEvent } from 'react';
 import { useState } from 'react';
+import { StoryWorkflowResult } from '../components/StoryWorkflowResult';
 import { PageLayout } from '../components/PageLayout';
+import { formalizeSurvey, generateStory } from '../services/api';
+import type { FormalizedStoryRequest } from '../types/story';
 import type { SurveyFormData } from '../types/survey';
 
 const initialSurveyData: SurveyFormData = {
@@ -26,10 +29,45 @@ const surveyFieldLabels: Record<keyof SurveyFormData, string> = {
 export function SurveyPage() {
   const [formData, setFormData] = useState<SurveyFormData>(initialSurveyData);
   const [submittedData, setSubmittedData] = useState<SurveyFormData | null>(null);
+  const [formalizedStory, setFormalizedStory] = useState<FormalizedStoryRequest | null>(null);
+  const [storyText, setStoryText] = useState('');
+  const [modelName, setModelName] = useState('');
+  const [isFormalizing, setIsFormalizing] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setSubmittedData({ ...formData });
+
+    try {
+      setIsFormalizing(true);
+      setError('');
+      setSuccessMessage('');
+      setStoryText('');
+      setModelName('');
+      setSubmittedData({ ...formData });
+      const result = await formalizeSurvey({
+        child_age: formData.childAge,
+        main_character: formData.mainCharacter,
+        theme: formData.storyTheme,
+        setting: formData.storyPlace,
+        tone: formData.storyMood,
+        moral: formData.hasMoral,
+        length: formData.storyLength,
+      });
+      setFormalizedStory(result);
+      setSuccessMessage('Результаты опроса формализованы. Теперь можно запустить генерацию сказки.');
+    } catch (requestError) {
+      setFormalizedStory(null);
+      setError(
+        requestError instanceof Error
+          ? requestError.message
+          : 'Не удалось формализовать результаты опроса.',
+      );
+    } finally {
+      setIsFormalizing(false);
+    }
   };
 
   const handleChange = (field: keyof SurveyFormData, value: string) => {
@@ -39,14 +77,61 @@ export function SurveyPage() {
     }));
   };
 
+  const handleGenerate = async () => {
+    if (!formalizedStory) {
+      setError('Сначала выполните формализацию результатов опроса.');
+      return;
+    }
+
+    try {
+      setIsGenerating(true);
+      setError('');
+      setSuccessMessage('');
+      const result = await generateStory(formalizedStory);
+      setStoryText(result.story_text);
+      setModelName(result.model);
+      setSuccessMessage('Сказка успешно сгенерирована через backend.');
+    } catch (requestError) {
+      setError(
+        requestError instanceof Error ? requestError.message : 'Не удалось сгенерировать сказку.',
+      );
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const sourceContent = submittedData ? (
+    <div className="workflow-stack">
+      <div className="survey-result">
+        {(Object.keys(submittedData) as Array<keyof SurveyFormData>).map((field) => (
+          <div className="survey-result__item" key={field}>
+            <span>{surveyFieldLabels[field]}</span>
+            <strong>{submittedData[field] || 'Не указано'}</strong>
+          </div>
+        ))}
+      </div>
+
+      <div className="action-row">
+        <button
+          className="secondary-button"
+          disabled={!formalizedStory || isGenerating}
+          type="button"
+          onClick={handleGenerate}
+        >
+          {isGenerating ? 'Генерация...' : 'Сгенерировать сказку'}
+        </button>
+      </div>
+    </div>
+  ) : null;
+
   return (
     <PageLayout>
       <section className="page-header">
         <p className="page-header__eyebrow">Сценарий 3</p>
         <h1>Опрос для подготовки запроса</h1>
         <p>
-          Форма собирает ключевые параметры будущей сказки. Эти данные можно будет использовать для
-          автоматической сборки формализованного промпта на следующем этапе.
+          Форма собирает ключевые параметры будущей сказки. После отправки данные переходят в единый
+          формализованный prompt и могут быть использованы для генерации через backend.
         </p>
       </section>
 
@@ -139,35 +224,23 @@ export function SurveyPage() {
             </select>
           </label>
 
-          <button className="primary-button" type="submit">
-            Сформировать результат опроса
+          {error ? <p className="form-error">{error}</p> : null}
+          {successMessage ? <div className="info-block info-block--success">{successMessage}</div> : null}
+
+          <button className="primary-button" disabled={isFormalizing} type="submit">
+            {isFormalizing ? 'Формализация...' : 'Сформировать запрос'}
           </button>
         </form>
       </section>
 
       <section className="result-panel">
-        <div className="result-panel__header">
-          <h2>Результат опроса</h2>
-          <p>
-            Ниже показаны структурированные данные, которые можно будет преобразовать в формальный
-            запрос.
-          </p>
-        </div>
-
-        {submittedData ? (
-          <div className="survey-result">
-            {(Object.keys(submittedData) as Array<keyof SurveyFormData>).map((field) => (
-              <div className="survey-result__item" key={field}>
-                <span>{surveyFieldLabels[field]}</span>
-                <strong>{submittedData[field] || 'Не указано'}</strong>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="placeholder-card">
-            После отправки формы здесь появится структурированный результат.
-          </div>
-        )}
+        <StoryWorkflowResult
+          formalizedStory={formalizedStory}
+          modelName={modelName}
+          sourceContent={sourceContent}
+          sourcePlaceholder="После отправки формы здесь появятся структурированные ответы пользователя."
+          storyText={storyText}
+        />
       </section>
     </PageLayout>
   );
