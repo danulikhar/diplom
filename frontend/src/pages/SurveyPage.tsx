@@ -1,6 +1,6 @@
 import type { FormEvent } from 'react';
 import { useState } from 'react';
-import { StoryWorkflowResult } from '../components/StoryWorkflowResult';
+import { StoryWorkflowResultSimple } from '../components/StoryWorkflowResultSimple';
 import { PageLayout } from '../components/PageLayout';
 import { formalizeSurvey, generateStory } from '../services/api';
 import type { FormalizedStoryRequest } from '../types/story';
@@ -31,7 +31,6 @@ export function SurveyPage() {
   const [submittedData, setSubmittedData] = useState<SurveyFormData | null>(null);
   const [formalizedStory, setFormalizedStory] = useState<FormalizedStoryRequest | null>(null);
   const [storyText, setStoryText] = useState('');
-  const [modelName, setModelName] = useState('');
   const [isFormalizing, setIsFormalizing] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState('');
@@ -45,7 +44,6 @@ export function SurveyPage() {
       setError('');
       setSuccessMessage('');
       setStoryText('');
-      setModelName('');
       setSubmittedData({ ...formData });
       const result = await formalizeSurvey({
         child_age: formData.childAge,
@@ -87,7 +85,6 @@ export function SurveyPage() {
       setSuccessMessage('');
       const result = await generateStory(formalizedStory);
       setStoryText(result.story_text);
-      setModelName(result.model);
       setSuccessMessage('Сказка готова. Ниже уже ждет теплая история.');
     } catch (requestError) {
       setError(
@@ -232,11 +229,11 @@ export function SurveyPage() {
       </section>
 
       <section className="result-panel">
-        <StoryWorkflowResult
+        <StoryWorkflowResultSimple
           formalizedStory={formalizedStory}
-          modelName={modelName}
           sourceContent={sourceContent}
           sourcePlaceholder="Когда вы заполните форму, здесь появятся выбранные детали будущей сказки."
+          sourceDescription="Здесь собраны слова, выбор и детали, с которых начинается будущая сказка."
           storyText={storyText}
         />
       </section>

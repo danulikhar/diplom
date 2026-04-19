@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { StoryWorkflowResult } from '../components/StoryWorkflowResult';
+import { StoryWorkflowResultSimple } from '../components/StoryWorkflowResultSimple';
 import { PageLayout } from '../components/PageLayout';
 import { TemplateCard } from '../components/TemplateCard';
 import { formalizeTemplate, generateStory, getTemplates } from '../services/api';
@@ -12,7 +12,6 @@ export function TemplatesPage() {
   const [childAge, setChildAge] = useState('');
   const [formalizedStory, setFormalizedStory] = useState<FormalizedStoryRequest | null>(null);
   const [storyText, setStoryText] = useState('');
-  const [modelName, setModelName] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isFormalizing, setIsFormalizing] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -41,7 +40,6 @@ export function TemplatesPage() {
     setSelectedTemplate(template);
     setFormalizedStory(null);
     setStoryText('');
-    setModelName('');
     setRequestError('');
     setSuccessMessage('');
   };
@@ -57,7 +55,6 @@ export function TemplatesPage() {
       setRequestError('');
       setSuccessMessage('');
       setStoryText('');
-      setModelName('');
       const result = await formalizeTemplate(selectedTemplate.id, childAge);
       setFormalizedStory(result);
       setSuccessMessage('Основа сказки готова. Осталось только попросить историю ожить.');
@@ -82,7 +79,6 @@ export function TemplatesPage() {
       setSuccessMessage('');
       const result = await generateStory(formalizedStory);
       setStoryText(result.story_text);
-      setModelName(result.model);
       setSuccessMessage('Сказка уже готова и ждет вас ниже.');
     } catch (requestErrorValue) {
       setRequestError(
@@ -160,11 +156,12 @@ export function TemplatesPage() {
       ) : null}
 
       <section className="result-panel">
-        <StoryWorkflowResult
+        <StoryWorkflowResultSimple
           formalizedStory={formalizedStory}
-          modelName={modelName}
           sourceContent={sourceContent}
           sourcePlaceholder="Выберите одну из заготовок, и здесь появится ее описание."
+          sourceTitle="Заготовка"
+          sourceDescription="Здесь собраны слова, выбор и детали, с которых начинается будущая сказка."
           storyText={storyText}
         />
       </section>

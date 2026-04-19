@@ -1,6 +1,6 @@
 import type { FormEvent } from 'react';
 import { useState } from 'react';
-import { StoryWorkflowResult } from '../components/StoryWorkflowResult';
+import { StoryWorkflowResultSimple } from '../components/StoryWorkflowResultSimple';
 import { PageLayout } from '../components/PageLayout';
 import { formalizeCustomPrompt, generateStory } from '../services/api';
 import type { FormalizedStoryRequest } from '../types/story';
@@ -10,7 +10,6 @@ export function CustomPromptPage() {
   const [submittedText, setSubmittedText] = useState('');
   const [formalizedStory, setFormalizedStory] = useState<FormalizedStoryRequest | null>(null);
   const [storyText, setStoryText] = useState('');
-  const [modelName, setModelName] = useState('');
   const [isFormalizing, setIsFormalizing] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState('');
@@ -34,14 +33,13 @@ export function CustomPromptPage() {
       setSuccessMessage('');
       setSubmittedText(normalizedText);
       setStoryText('');
-      setModelName('');
       const result = await formalizeCustomPrompt(normalizedText);
       setFormalizedStory(result);
-      setSuccessMessage('Ваша задумка уже превратилась в основу сказки. Можно звать историю.');
+      setSuccessMessage('Основа сказки уже готова. Можно звать историю.');
     } catch (requestError) {
       setFormalizedStory(null);
       setError(
-        requestError instanceof Error ? requestError.message : 'Не удалось подготовить вашу задумку.',
+        requestError instanceof Error ? requestError.message : 'Не удалось подготовить основу сказки.',
       );
     } finally {
       setIsFormalizing(false);
@@ -50,7 +48,7 @@ export function CustomPromptPage() {
 
   const handleGenerate = async () => {
     if (!formalizedStory) {
-      setError('Сначала сохраните задумку, чтобы история получила направление.');
+      setError('Сначала сохраните текст, чтобы история получила направление.');
       return;
     }
 
@@ -60,7 +58,6 @@ export function CustomPromptPage() {
       setSuccessMessage('');
       const result = await generateStory(formalizedStory);
       setStoryText(result.story_text);
-      setModelName(result.model);
       setSuccessMessage('Сказка готова. Ниже уже можно читать.');
     } catch (requestError) {
       setError(
@@ -125,12 +122,12 @@ export function CustomPromptPage() {
       </section>
 
       <section className="result-panel">
-        <StoryWorkflowResult
+        <StoryWorkflowResultSimple
           formalizedStory={formalizedStory}
-          modelName={modelName}
           sourceContent={sourceContent}
           sourcePlaceholder="Когда вы поделитесь своей идеей, здесь появится ее текст."
           storyText={storyText}
+          sourceDescription="Здесь собраны слова, с которых начинается будущая сказка."
         />
       </section>
     </PageLayout>
