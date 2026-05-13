@@ -84,6 +84,61 @@ Swagger-документация FastAPI:
 http://localhost:8000/docs
 ```
 
+### Настройка LLM
+
+По умолчанию генерация сказок работает через RouterAI. Для этого создайте файл `backend/.env`:
+
+```env
+ROUTERAI_API_KEY=your-routerai-api-key
+ROUTERAI_BASE_URL=https://routerai.ru/api/v1
+```
+
+Также приложение поддерживает локальную LLM через OpenAI-compatible API. Например, можно запустить `llama.cpp` с моделью `t-tech/T-lite-it-2.1-GGUF`, а затем выбрать в интерфейсе модель `T-lite-it 2.1 local`.
+
+Пример запуска сервера `llama.cpp` из каталога репозитория `llama.cpp`:
+
+```bash
+./llama-server \
+  -hf t-tech/T-lite-it-2.1-GGUF:Q8_0 \
+  --alias T-lite-it-2.1 \
+  --jinja \
+  --host 127.0.0.1 \
+  --port 8080 \
+  -ngl 99 \
+  -fa \
+  -sm row \
+  --temp 0.6 \
+  --presence-penalty 1.0 \
+  -c 40960 \
+  --no-context-shift
+```
+
+Для Windows PowerShell та же команда записывается с обратной кавычкой:
+
+```powershell
+.\llama-server.exe `
+  -hf t-tech/T-lite-it-2.1-GGUF:Q8_0 `
+  --alias T-lite-it-2.1 `
+  --jinja `
+  --host 127.0.0.1 `
+  --port 8080 `
+  -ngl 99 `
+  -fa `
+  -sm row `
+  --temp 0.6 `
+  --presence-penalty 1.0 `
+  -c 40960 `
+  --no-context-shift
+```
+
+Если локальный сервер запущен не на `http://127.0.0.1:8080/v1` или используется другой alias модели, добавьте в `backend/.env`:
+
+```env
+LOCAL_LLM_API_KEY=local
+LOCAL_LLM_BASE_URL=http://127.0.0.1:8080/v1
+LOCAL_LLM_MODEL=T-lite-it-2.1
+```
+
 ## Текущее назначение структуры
 
 - `frontend/src/components` — переиспользуемые UI-компоненты

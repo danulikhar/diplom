@@ -9,6 +9,25 @@ SYSTEM_PROMPT = (
 )
 
 
+LOCAL_STORY_MODELS: set[StoryModelId] = {"local/t-lite-it-2.1"}
+
+
+def get_openai_client_config(model: StoryModelId) -> tuple[str, str, str]:
+    if model in LOCAL_STORY_MODELS:
+        return (
+            settings.local_llm_api_key,
+            settings.local_llm_base_url,
+            settings.local_llm_model,
+        )
+
+    if not settings.routerai_api_key:
+        raise ValueError(
+            "Не задан ROUTERAI_API_KEY. Создайте backend/.env и добавьте параметры RouterAI."
+        )
+
+    return settings.routerai_api_key, settings.routerai_base_url, model
+
+
 def generate_story_text(formalized_request: FormalizedStoryRequest, model: StoryModelId) -> str:
     try:
         from openai import OpenAI
@@ -17,18 +36,15 @@ def generate_story_text(formalized_request: FormalizedStoryRequest, model: Story
             "Пакет openai не установлен. Выполните pip install -r backend/requirements.txt."
         ) from error
 
-    if not settings.routerai_api_key:
-        raise ValueError(
-            "Не задан ROUTERAI_API_KEY. Создайте backend/.env и добавьте параметры RouterAI."
-        )
+    api_key, base_url, provider_model = get_openai_client_config(model)
 
     client = OpenAI(
-        api_key=settings.routerai_api_key,
-        base_url=settings.routerai_base_url,
+        api_key=api_key,
+        base_url=base_url,
     )
 
     response = client.chat.completions.create(
-        model=model,
+        model=provider_model,
         messages=[
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": formalized_request.final_prompt},

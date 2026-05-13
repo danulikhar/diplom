@@ -20,6 +20,9 @@ class Settings(BaseSettings):
     routerai_api_key: str = ""
     routerai_base_url: str = "https://routerai.ru/api/v1"
     routerai_model: str = DEFAULT_STORY_MODEL
+    local_llm_api_key: str = "local"
+    local_llm_base_url: str = "http://127.0.0.1:8080/v1"
+    local_llm_model: str = "T-lite-it-2.1"
 
 
 settings = Settings()

@@ -42,7 +42,7 @@ def generate_story(payload: GenerateStoryRequest) -> GenerateStoryResponse:
     except Exception as error:
         raise HTTPException(
             status_code=502,
-            detail="Не удалось получить ответ от RouterAI. Проверьте настройки и повторите попытку.",
+            detail="Не удалось получить ответ от LLM-провайдера. Проверьте настройки и повторите попытку.",
         ) from error
 
     return GenerateStoryResponse(
