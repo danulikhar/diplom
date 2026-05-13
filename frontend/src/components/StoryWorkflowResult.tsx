@@ -6,6 +6,7 @@ type StoryWorkflowResultProps = {
   sourcePlaceholder: string;
   formalizedStory: FormalizedStoryRequest | null;
   storyText: string;
+  modelName?: string;
   sourceTitle?: string;
   sourceDescription?: string;
 };

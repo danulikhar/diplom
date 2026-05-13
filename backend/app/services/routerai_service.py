@@ -1,4 +1,5 @@
 ﻿from app.core.config import settings
+from app.core.story_models import StoryModelId
 from app.schemas.story import FormalizedStoryRequest
 
 SYSTEM_PROMPT = (
@@ -8,7 +9,7 @@ SYSTEM_PROMPT = (
 )
 
 
-def generate_story_text(formalized_request: FormalizedStoryRequest) -> str:
+def generate_story_text(formalized_request: FormalizedStoryRequest, model: StoryModelId) -> str:
     try:
         from openai import OpenAI
     except ModuleNotFoundError as error:
@@ -27,7 +28,7 @@ def generate_story_text(formalized_request: FormalizedStoryRequest) -> str:
     )
 
     response = client.chat.completions.create(
-        model=settings.routerai_model,
+        model=model,
         messages=[
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": formalized_request.final_prompt},

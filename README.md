@@ -1,6 +1,3 @@
-# Формализация запросов к генеративным моделям
-
-Стартовый каркас дипломного веб-приложения для генерации детских сказок.
 
 ## Технологический стек
 
@@ -50,21 +47,7 @@
 `-- README.md
 ```
 
-## Что уже реализовано
-
-- Главная страница с названием проекта и кратким описанием
-- Три пользовательских сценария в виде карточек
-- Формализация запроса через шаблон, свободный ввод и опрос
-- Генерация детской сказки через backend
-- FastAPI backend с endpoint:
-  - `GET /api/health`
-  - `GET /api/templates`
-  - `POST /api/formalization/template`
-  - `POST /api/formalization/custom`
-  - `POST /api/formalization/survey`
-  - `POST /api/stories/generate`
-
-## Как запустить frontend
+## frontend
 
 ```bash
 cd frontend
@@ -72,9 +55,9 @@ npm install
 npm run dev
 ```
 
-Frontend будет доступен по адресу `http://localhost:5173`.
+Frontend `http://localhost:5173`.
 
-## Как запустить backend
+## backend
 
 ```powershell
 cd backend
@@ -83,7 +66,7 @@ python -m pip install -r requirements.txt
 python main.py
 ```
 
-Если виртуального окружения `.venv` еще нет, создайте его перед активацией:
+Если виртуального окружения `.venv` еще нет
 
 ```powershell
 cd backend
@@ -93,7 +76,7 @@ python -m pip install -r requirements.txt
 python main.py
 ```
 
-Backend будет доступен по адресу `http://localhost:8000`.
+Backend `http://localhost:8000`.
 
 Swagger-документация FastAPI:
 
@@ -113,9 +96,3 @@ http://localhost:8000/docs
 - `backend/app/db` — будущий слой работы с PostgreSQL
 - `backend/app/core` — конфигурация приложения
 
-## Дальше можно развивать
-
-- интеграцию с PostgreSQL
-- хранение истории пользовательских сказок
-- аутентификацию пользователей
-- сохранение и просмотр ранее сгенерированных сказок

@@ -2,8 +2,10 @@ import type { FormEvent } from 'react';
 import { useState } from 'react';
 import { StoryWorkflowResultSimple } from '../components/StoryWorkflowResultSimple';
 import { PageLayout } from '../components/PageLayout';
+import { StoryModelSelect } from '../components/StoryModelSelect';
+import { defaultStoryModel, getStoryModelLabel } from '../constants/storyModels';
 import { formalizeSurvey, generateStory } from '../services/api';
-import type { FormalizedStoryRequest } from '../types/story';
+import type { FormalizedStoryRequest, StoryModelId } from '../types/story';
 import type { SurveyFormData } from '../types/survey';
 
 const initialSurveyData: SurveyFormData = {
@@ -30,6 +32,8 @@ export function SurveyPage() {
   const [formData, setFormData] = useState<SurveyFormData>(initialSurveyData);
   const [submittedData, setSubmittedData] = useState<SurveyFormData | null>(null);
   const [formalizedStory, setFormalizedStory] = useState<FormalizedStoryRequest | null>(null);
+  const [selectedStoryModel, setSelectedStoryModel] = useState<StoryModelId>(defaultStoryModel);
+  const [generatedStoryModel, setGeneratedStoryModel] = useState<StoryModelId | null>(null);
   const [storyText, setStoryText] = useState('');
   const [isFormalizing, setIsFormalizing] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -44,6 +48,7 @@ export function SurveyPage() {
       setError('');
       setSuccessMessage('');
       setStoryText('');
+      setGeneratedStoryModel(null);
       setSubmittedData({ ...formData });
       const result = await formalizeSurvey({
         child_age: formData.childAge,
@@ -83,8 +88,9 @@ export function SurveyPage() {
       setIsGenerating(true);
       setError('');
       setSuccessMessage('');
-      const result = await generateStory(formalizedStory);
+      const result = await generateStory(formalizedStory, selectedStoryModel);
       setStoryText(result.story_text);
+      setGeneratedStoryModel(result.model);
       setSuccessMessage('Сказка готова. Ниже уже ждет теплая история.');
     } catch (requestError) {
       setError(
@@ -107,6 +113,8 @@ export function SurveyPage() {
       </div>
 
       <div className="action-row">
+        <StoryModelSelect disabled={isGenerating} value={selectedStoryModel} onChange={setSelectedStoryModel} />
+
         <button
           className="secondary-button"
           disabled={!formalizedStory || isGenerating}
@@ -235,6 +243,7 @@ export function SurveyPage() {
           sourcePlaceholder="Когда вы заполните форму, здесь появятся выбранные детали будущей сказки."
           sourceDescription="Здесь собраны слова, выбор и детали, с которых начинается будущая сказка."
           storyText={storyText}
+          modelName={generatedStoryModel ? getStoryModelLabel(generatedStoryModel) : undefined}
         />
       </section>
     </PageLayout>

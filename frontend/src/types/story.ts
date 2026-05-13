@@ -1,4 +1,5 @@
 export type SourceType = 'template' | 'custom' | 'survey';
+export type StoryModelId = 'google/gemma-4-26b-a4b-it' | 'yandex/gpt-pro-5.1' | 'qwen/qwen3.6-flash';
 
 export type FormalizedStoryRequest = {
   source_type: SourceType;
@@ -18,6 +19,6 @@ export type FormalizedStoryRequest = {
 
 export type GenerateStoryResponse = {
   story_text: string;
-  model: string;
+  model: StoryModelId;
   formalized_request: FormalizedStoryRequest;
 };

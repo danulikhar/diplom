@@ -1,5 +1,6 @@
 from typing import Any, Literal
 
+from app.core.story_models import DEFAULT_STORY_MODEL, StoryModelId
 from pydantic import BaseModel, Field
 
 
@@ -43,9 +44,10 @@ class FormalizedStoryRequest(BaseModel):
 
 class GenerateStoryRequest(BaseModel):
     formalized_request: FormalizedStoryRequest
+    model: StoryModelId = DEFAULT_STORY_MODEL
 
 
 class GenerateStoryResponse(BaseModel):
     story_text: str
-    model: str
+    model: StoryModelId
     formalized_request: FormalizedStoryRequest

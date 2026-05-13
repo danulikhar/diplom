@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { StoryWorkflowResultSimple } from '../components/StoryWorkflowResultSimple';
 import { PageLayout } from '../components/PageLayout';
+import { StoryModelSelect } from '../components/StoryModelSelect';
 import { TemplateCard } from '../components/TemplateCard';
+import { defaultStoryModel, getStoryModelLabel } from '../constants/storyModels';
 import { formalizeTemplate, generateStory, getTemplates } from '../services/api';
-import type { FormalizedStoryRequest } from '../types/story';
+import type { FormalizedStoryRequest, StoryModelId } from '../types/story';
 import type { StoryTemplate } from '../types/template';
 
 export function TemplatesPage() {
@@ -11,6 +13,8 @@ export function TemplatesPage() {
   const [selectedTemplate, setSelectedTemplate] = useState<StoryTemplate | null>(null);
   const [childAge, setChildAge] = useState('');
   const [formalizedStory, setFormalizedStory] = useState<FormalizedStoryRequest | null>(null);
+  const [selectedStoryModel, setSelectedStoryModel] = useState<StoryModelId>(defaultStoryModel);
+  const [generatedStoryModel, setGeneratedStoryModel] = useState<StoryModelId | null>(null);
   const [storyText, setStoryText] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isFormalizing, setIsFormalizing] = useState(false);
@@ -40,6 +44,7 @@ export function TemplatesPage() {
     setSelectedTemplate(template);
     setFormalizedStory(null);
     setStoryText('');
+    setGeneratedStoryModel(null);
     setRequestError('');
     setSuccessMessage('');
   };
@@ -55,6 +60,7 @@ export function TemplatesPage() {
       setRequestError('');
       setSuccessMessage('');
       setStoryText('');
+      setGeneratedStoryModel(null);
       const result = await formalizeTemplate(selectedTemplate.id, childAge);
       setFormalizedStory(result);
       setSuccessMessage('Основа сказки готова. Осталось только попросить историю ожить.');
@@ -77,8 +83,9 @@ export function TemplatesPage() {
       setIsGenerating(true);
       setRequestError('');
       setSuccessMessage('');
-      const result = await generateStory(formalizedStory);
+      const result = await generateStory(formalizedStory, selectedStoryModel);
       setStoryText(result.story_text);
+      setGeneratedStoryModel(result.model);
       setSuccessMessage('Сказка уже готова и ждет вас ниже.');
     } catch (requestErrorValue) {
       setRequestError(
@@ -110,6 +117,8 @@ export function TemplatesPage() {
       </label>
 
       <div className="action-row">
+        <StoryModelSelect disabled={isGenerating} value={selectedStoryModel} onChange={setSelectedStoryModel} />
+
         <button className="primary-button" disabled={isFormalizing} type="button" onClick={handleFormalize}>
           {isFormalizing ? 'Готовим основу...' : 'Подготовить сказку'}
         </button>
@@ -163,6 +172,7 @@ export function TemplatesPage() {
           sourceTitle="Заготовка"
           sourceDescription="Здесь собраны слова, выбор и детали, с которых начинается будущая сказка."
           storyText={storyText}
+          modelName={generatedStoryModel ? getStoryModelLabel(generatedStoryModel) : undefined}
         />
       </section>
     </PageLayout>

@@ -6,6 +6,7 @@ type StoryWorkflowResultSimpleProps = {
   sourcePlaceholder: string;
   formalizedStory: FormalizedStoryRequest | null;
   storyText: string;
+  modelName?: string;
   sourceTitle?: string;
   sourceDescription?: string;
 };
@@ -15,6 +16,7 @@ export function StoryWorkflowResultSimple({
   sourcePlaceholder,
   formalizedStory,
   storyText,
+  modelName,
   sourceTitle,
   sourceDescription,
 }: StoryWorkflowResultSimpleProps) {
@@ -52,6 +54,7 @@ export function StoryWorkflowResultSimple({
       <article className="workflow-card">
         <div className="result-panel__header">
           <h2>Готовая сказка</h2>
+          {storyText && modelName ? <p>Модель: {modelName}</p> : null}
         </div>
 
         {storyText ? (

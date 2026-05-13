@@ -448,7 +448,12 @@ pre {
 .action-row {
   display: flex;
   flex-wrap: wrap;
+  align-items: flex-end;
   gap: 12px;
+}
+
+.story-model-select {
+  min-width: min(100%, 260px);
 }
 
 .scenario-card h3,

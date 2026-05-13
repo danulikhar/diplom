@@ -1,4 +1,6 @@
 ﻿import type { FormalizedStoryRequest, GenerateStoryResponse } from '../types/story';
+import { defaultStoryModel } from '../constants/storyModels';
+import type { StoryModelId } from '../types/story';
 import type { StoryTemplate } from '../types/template';
 
 export const apiConfig = {
@@ -69,8 +71,9 @@ export function formalizeSurvey(payload: {
   return postJson<FormalizedStoryRequest>('/formalization/survey', payload);
 }
 
-export function generateStory(formalizedRequest: FormalizedStoryRequest) {
+export function generateStory(formalizedRequest: FormalizedStoryRequest, model: StoryModelId = defaultStoryModel) {
   return postJson<GenerateStoryResponse>('/stories/generate', {
     formalized_request: formalizedRequest,
+    model,
   });
 }

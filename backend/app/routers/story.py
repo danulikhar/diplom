@@ -1,6 +1,5 @@
 ﻿from fastapi import APIRouter, HTTPException
 
-from app.core.config import settings
 from app.schemas.story import (
     CustomPromptFormalizationRequest,
     FormalizedStoryRequest,
@@ -37,7 +36,7 @@ def formalize_survey(payload: SurveyFormalizationRequest) -> FormalizedStoryRequ
 @router.post("/stories/generate", response_model=GenerateStoryResponse)
 def generate_story(payload: GenerateStoryRequest) -> GenerateStoryResponse:
     try:
-        story_text = generate_story_text(payload.formalized_request)
+        story_text = generate_story_text(payload.formalized_request, payload.model)
     except ValueError as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
     except Exception as error:
@@ -48,6 +47,6 @@ def generate_story(payload: GenerateStoryRequest) -> GenerateStoryResponse:
 
     return GenerateStoryResponse(
         story_text=story_text,
-        model=settings.routerai_model,
+        model=payload.model,
         formalized_request=payload.formalized_request,
     )

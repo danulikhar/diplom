@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from app.core.story_models import DEFAULT_STORY_MODEL
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -18,7 +19,7 @@ class Settings(BaseSettings):
     database_url: str = "postgresql+psycopg://postgres:postgres@localhost:5432/fairy_tales"
     routerai_api_key: str = ""
     routerai_base_url: str = "https://routerai.ru/api/v1"
-    routerai_model: str = "google/gemma-4-26b-a4b-it"
+    routerai_model: str = DEFAULT_STORY_MODEL
 
 
 settings = Settings()

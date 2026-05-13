@@ -2,13 +2,17 @@ import type { FormEvent } from 'react';
 import { useState } from 'react';
 import { StoryWorkflowResultSimple } from '../components/StoryWorkflowResultSimple';
 import { PageLayout } from '../components/PageLayout';
+import { StoryModelSelect } from '../components/StoryModelSelect';
+import { defaultStoryModel, getStoryModelLabel } from '../constants/storyModels';
 import { formalizeCustomPrompt, generateStory } from '../services/api';
-import type { FormalizedStoryRequest } from '../types/story';
+import type { FormalizedStoryRequest, StoryModelId } from '../types/story';
 
 export function CustomPromptPage() {
   const [promptText, setPromptText] = useState('');
   const [submittedText, setSubmittedText] = useState('');
   const [formalizedStory, setFormalizedStory] = useState<FormalizedStoryRequest | null>(null);
+  const [selectedStoryModel, setSelectedStoryModel] = useState<StoryModelId>(defaultStoryModel);
+  const [generatedStoryModel, setGeneratedStoryModel] = useState<StoryModelId | null>(null);
   const [storyText, setStoryText] = useState('');
   const [isFormalizing, setIsFormalizing] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -24,6 +28,7 @@ export function CustomPromptPage() {
       setError('Напишите пару строк о будущей сказке, чтобы мы могли начать.');
       setSubmittedText('');
       setFormalizedStory(null);
+      setGeneratedStoryModel(null);
       return;
     }
 
@@ -33,6 +38,7 @@ export function CustomPromptPage() {
       setSuccessMessage('');
       setSubmittedText(normalizedText);
       setStoryText('');
+      setGeneratedStoryModel(null);
       const result = await formalizeCustomPrompt(normalizedText);
       setFormalizedStory(result);
       setSuccessMessage('Основа сказки уже готова. Можно звать историю.');
@@ -56,8 +62,9 @@ export function CustomPromptPage() {
       setIsGenerating(true);
       setError('');
       setSuccessMessage('');
-      const result = await generateStory(formalizedStory);
+      const result = await generateStory(formalizedStory, selectedStoryModel);
       setStoryText(result.story_text);
+      setGeneratedStoryModel(result.model);
       setSuccessMessage('Сказка готова. Ниже уже можно читать.');
     } catch (requestError) {
       setError(
@@ -75,6 +82,8 @@ export function CustomPromptPage() {
       </div>
 
       <div className="action-row">
+        <StoryModelSelect disabled={isGenerating} value={selectedStoryModel} onChange={setSelectedStoryModel} />
+
         <button
           className="secondary-button"
           disabled={!formalizedStory || isGenerating}
@@ -127,6 +136,7 @@ export function CustomPromptPage() {
           sourceContent={sourceContent}
           sourcePlaceholder="Когда вы поделитесь своей идеей, здесь появится ее текст."
           storyText={storyText}
+          modelName={generatedStoryModel ? getStoryModelLabel(generatedStoryModel) : undefined}
           sourceDescription="Здесь собраны слова, с которых начинается будущая сказка."
         />
       </section>
