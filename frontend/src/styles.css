@@ -456,6 +456,23 @@ pre {
   min-width: min(100%, 260px);
 }
 
+.generation-settings {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.temperature-control {
+  min-width: min(100%, 220px);
+}
+
+.temperature-control input[type='range'] {
+  min-height: 48px;
+  padding: 0;
+  accent-color: #14b8a6;
+}
+
 .scenario-card h3,
 .template-card h3,
 .prompt-preview h3 {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { StoryWorkflowResultSimple } from '../components/StoryWorkflowResultSimple';
 import { PageLayout } from '../components/PageLayout';
-import { StoryModelSelect } from '../components/StoryModelSelect';
+import { GenerationSettings } from '../components/GenerationSettings';
 import { TemplateCard } from '../components/TemplateCard';
 import { defaultStoryModel, getStoryModelLabel } from '../constants/storyModels';
 import { formalizeTemplate, generateStory, getTemplates } from '../services/api';
@@ -14,6 +14,7 @@ export function TemplatesPage() {
   const [childAge, setChildAge] = useState('');
   const [formalizedStory, setFormalizedStory] = useState<FormalizedStoryRequest | null>(null);
   const [selectedStoryModel, setSelectedStoryModel] = useState<StoryModelId>(defaultStoryModel);
+  const [selectedTemperature, setSelectedTemperature] = useState(8);
   const [generatedStoryModel, setGeneratedStoryModel] = useState<StoryModelId | null>(null);
   const [storyText, setStoryText] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -83,7 +84,7 @@ export function TemplatesPage() {
       setIsGenerating(true);
       setRequestError('');
       setSuccessMessage('');
-      const result = await generateStory(formalizedStory, selectedStoryModel);
+      const result = await generateStory(formalizedStory, selectedStoryModel, selectedTemperature);
       setStoryText(result.story_text);
       setGeneratedStoryModel(result.model);
       setSuccessMessage('Сказка уже готова и ждет вас ниже.');
@@ -117,7 +118,13 @@ export function TemplatesPage() {
       </label>
 
       <div className="action-row">
-        <StoryModelSelect disabled={isGenerating} value={selectedStoryModel} onChange={setSelectedStoryModel} />
+        <GenerationSettings
+          disabled={isGenerating}
+          model={selectedStoryModel}
+          temperature={selectedTemperature}
+          onModelChange={setSelectedStoryModel}
+          onTemperatureChange={setSelectedTemperature}
+        />
 
         <button className="primary-button" disabled={isFormalizing} type="button" onClick={handleFormalize}>
           {isFormalizing ? 'Готовим основу...' : 'Подготовить сказку'}

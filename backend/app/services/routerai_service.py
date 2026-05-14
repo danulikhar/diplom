@@ -28,7 +28,11 @@ def get_openai_client_config(model: StoryModelId) -> tuple[str, str, str]:
     return settings.routerai_api_key, settings.routerai_base_url, model
 
 
-def generate_story_text(formalized_request: FormalizedStoryRequest, model: StoryModelId) -> str:
+def generate_story_text(
+    formalized_request: FormalizedStoryRequest,
+    model: StoryModelId,
+    temperature: int = 8,
+) -> str:
     try:
         from openai import OpenAI
     except ModuleNotFoundError as error:
@@ -49,7 +53,7 @@ def generate_story_text(formalized_request: FormalizedStoryRequest, model: Story
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": formalized_request.final_prompt},
         ],
-        temperature=0.8,
+        temperature=temperature / 10,
     )
 
     content = response.choices[0].message.content if response.choices else None

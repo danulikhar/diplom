@@ -2,7 +2,7 @@ import type { FormEvent } from 'react';
 import { useState } from 'react';
 import { StoryWorkflowResultSimple } from '../components/StoryWorkflowResultSimple';
 import { PageLayout } from '../components/PageLayout';
-import { StoryModelSelect } from '../components/StoryModelSelect';
+import { GenerationSettings } from '../components/GenerationSettings';
 import { defaultStoryModel, getStoryModelLabel } from '../constants/storyModels';
 import { formalizeSurvey, generateStory } from '../services/api';
 import type { FormalizedStoryRequest, StoryModelId } from '../types/story';
@@ -33,6 +33,7 @@ export function SurveyPage() {
   const [submittedData, setSubmittedData] = useState<SurveyFormData | null>(null);
   const [formalizedStory, setFormalizedStory] = useState<FormalizedStoryRequest | null>(null);
   const [selectedStoryModel, setSelectedStoryModel] = useState<StoryModelId>(defaultStoryModel);
+  const [selectedTemperature, setSelectedTemperature] = useState(8);
   const [generatedStoryModel, setGeneratedStoryModel] = useState<StoryModelId | null>(null);
   const [storyText, setStoryText] = useState('');
   const [isFormalizing, setIsFormalizing] = useState(false);
@@ -88,7 +89,7 @@ export function SurveyPage() {
       setIsGenerating(true);
       setError('');
       setSuccessMessage('');
-      const result = await generateStory(formalizedStory, selectedStoryModel);
+      const result = await generateStory(formalizedStory, selectedStoryModel, selectedTemperature);
       setStoryText(result.story_text);
       setGeneratedStoryModel(result.model);
       setSuccessMessage('Сказка готова. Ниже уже ждет теплая история.');
@@ -113,7 +114,13 @@ export function SurveyPage() {
       </div>
 
       <div className="action-row">
-        <StoryModelSelect disabled={isGenerating} value={selectedStoryModel} onChange={setSelectedStoryModel} />
+        <GenerationSettings
+          disabled={isGenerating}
+          model={selectedStoryModel}
+          temperature={selectedTemperature}
+          onModelChange={setSelectedStoryModel}
+          onTemperatureChange={setSelectedTemperature}
+        />
 
         <button
           className="secondary-button"

@@ -39,7 +39,7 @@ def formalize_survey(payload: SurveyFormalizationRequest) -> FormalizedStoryRequ
 @router.post("/stories/generate", response_model=GenerateStoryResponse)
 def generate_story(payload: GenerateStoryRequest) -> GenerateStoryResponse:
     try:
-        story_text = generate_story_text(payload.formalized_request, payload.model)
+        story_text = generate_story_text(payload.formalized_request, payload.model, payload.temperature)
     except ValueError as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
     except Exception as error:

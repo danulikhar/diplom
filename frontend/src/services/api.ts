@@ -71,9 +71,14 @@ export function formalizeSurvey(payload: {
   return postJson<FormalizedStoryRequest>('/formalization/survey', payload);
 }
 
-export function generateStory(formalizedRequest: FormalizedStoryRequest, model: StoryModelId = defaultStoryModel) {
+export function generateStory(
+  formalizedRequest: FormalizedStoryRequest,
+  model: StoryModelId = defaultStoryModel,
+  temperature = 8,
+) {
   return postJson<GenerateStoryResponse>('/stories/generate', {
     formalized_request: formalizedRequest,
     model,
+    temperature,
   });
 }

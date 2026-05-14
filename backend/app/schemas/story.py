@@ -45,6 +45,7 @@ class FormalizedStoryRequest(BaseModel):
 class GenerateStoryRequest(BaseModel):
     formalized_request: FormalizedStoryRequest
     model: StoryModelId = DEFAULT_STORY_MODEL
+    temperature: int = Field(default=8, ge=1, le=10)
 
 
 class GenerateStoryResponse(BaseModel):
