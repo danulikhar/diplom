@@ -95,40 +95,57 @@ ROUTERAI_BASE_URL=https://routerai.ru/api/v1
 
 Также приложение поддерживает локальную LLM через OpenAI-compatible API. Например, можно запустить `llama.cpp` с моделью `t-tech/T-lite-it-2.1-GGUF`, а затем выбрать в интерфейсе модель `T-lite-it 2.1 local`.
 
-Пример запуска сервера `llama.cpp` из каталога репозитория `llama.cpp`:
+Рекомендуемое место для файла модели:
+
+```text
+D:\llm-models\t-lite-it-2.1\T-lite-it-2.1-Q4_K_M.gguf
+```
+
+Модель лучше хранить вне папки проекта, потому что GGUF-файл весит несколько гигабайт и не должен попадать в git.
+
+Пример запуска сервера `llama.cpp`, если `llama-server` установлен через `winget`:
 
 ```bash
-./llama-server \
-  -hf t-tech/T-lite-it-2.1-GGUF:Q8_0 \
+llama-server \
+  -m D:\llm-models\t-lite-it-2.1\T-lite-it-2.1-Q4_K_M.gguf \
   --alias T-lite-it-2.1 \
   --jinja \
   --host 127.0.0.1 \
   --port 8080 \
-  -ngl 99 \
-  -fa \
-  -sm row \
-  --temp 0.6 \
-  --presence-penalty 1.0 \
-  -c 40960 \
-  --no-context-shift
+  -c 4096 \
+  -ngl 0 \
+  --device none \
+  --no-op-offload
 ```
 
-Для Windows PowerShell та же команда записывается с обратной кавычкой:
+Для Windows PowerShell:
 
 ```powershell
-.\llama-server.exe `
-  -hf t-tech/T-lite-it-2.1-GGUF:Q8_0 `
+llama-server `
+  -m D:\llm-models\t-lite-it-2.1\T-lite-it-2.1-Q4_K_M.gguf `
   --alias T-lite-it-2.1 `
   --jinja `
   --host 127.0.0.1 `
   --port 8080 `
-  -ngl 99 `
-  -fa `
-  -sm row `
-  --temp 0.6 `
-  --presence-penalty 1.0 `
-  -c 40960 `
-  --no-context-shift
+  -c 4096 `
+  -ngl 0 `
+  --device none `
+  --no-op-offload
+```
+
+Если `llama.cpp` скачан архивом, укажите полный путь к `llama-server.exe`, например:
+
+```powershell
+D:\llama.cpp\llama-server.exe `
+  -m D:\llm-models\t-lite-it-2.1\T-lite-it-2.1-Q4_K_M.gguf `
+  --alias T-lite-it-2.1 `
+  --jinja `
+  --host 127.0.0.1 `
+  --port 8080 `
+  -c 4096 `
+  -ngl 0 `
+  --device none `
+  --no-op-offload
 ```
 
 Если локальный сервер запущен не на `http://127.0.0.1:8080/v1` или используется другой alias модели, добавьте в `backend/.env`:

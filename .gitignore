@@ -4,6 +4,7 @@
 Thumbs.db
 .env
 *.log
+*.gguf
 node_modules/
 dist/
 frontend/dist/

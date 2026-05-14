@@ -1,4 +1,6 @@
-﻿from fastapi import APIRouter, HTTPException
+import logging
+
+from fastapi import APIRouter, HTTPException
 
 from app.schemas.story import (
     CustomPromptFormalizationRequest,
@@ -16,6 +18,7 @@ from app.services.prompt_service import (
 from app.services.routerai_service import generate_story_text
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 
 @router.post("/formalization/template", response_model=FormalizedStoryRequest)
@@ -40,6 +43,7 @@ def generate_story(payload: GenerateStoryRequest) -> GenerateStoryResponse:
     except ValueError as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
     except Exception as error:
+        logger.exception("LLM provider request failed")
         raise HTTPException(
             status_code=502,
             detail="Не удалось получить ответ от LLM-провайдера. Проверьте настройки и повторите попытку.",
